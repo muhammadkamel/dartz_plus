@@ -1,7 +1,9 @@
 name: dartz_plus
 version: 0.0.1
-homepage: https://github.com/muhammadkamel/dartz_plus
 description: Functional Programming in Dart.
+homepage: https://github.com/muhammadkamel/dartz_plus
+repository: https://github.com/muhammadkamel/dartz_plus
+license: MIT
 
 environment:
   sdk: ^3.10.1
