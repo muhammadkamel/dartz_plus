@@ -4,13 +4,15 @@ publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.10.1
+  sdk: ^3.10.3
 
 dependencies:
   flutter:
     sdk: flutter
   dartz_plus:
     path: ../
+  equatable: ^2.0.7
+  dio: ^5.9.0
 
 dev_dependencies:
   flutter_test:

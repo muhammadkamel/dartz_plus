@@ -17,6 +17,41 @@ sealed class Either<L, R> extends Equatable {
   /// Creates a [Right] instance containing the given value.
   const factory Either.right(R value) = Right<L, R>;
 
+  /// Creates an [Either] from a nullable value.
+  ///
+  /// If [value] is non-null, returns a [Right] containing the value.
+  /// If [value] is null, returns a [Left] containing the result of [onNull].
+  static Either<L, R> fromNullable<L, R>(R? value, L Function() onNull) {
+    return value != null ? Right(value) : Left(onNull());
+  }
+
+  /// Executes [run] and captures any exception as a [Left].
+  ///
+  /// If [run] returns successfully, returns a [Right] containing the result.
+  /// If [run] throws, returns a [Left] containing the result of [onError].
+  static Either<L, R> tryCatch<L, R>(
+    R Function() run,
+    L Function(Object error, StackTrace stackTrace) onError,
+  ) {
+    try {
+      return Right(run());
+    } catch (error, stackTrace) {
+      return Left(onError(error, stackTrace));
+    }
+  }
+
+  /// Creates an [Either] based on a predicate.
+  ///
+  /// If [predicate] is true, returns a [Right] containing the result of [onTrue].
+  /// If [predicate] is false, returns a [Left] containing the result of [onFalse].
+  static Either<L, R> cond<L, R>(
+    bool predicate,
+    R Function() onTrue,
+    L Function() onFalse,
+  ) {
+    return predicate ? Right(onTrue()) : Left(onFalse());
+  }
+
   /// Returns `true` if this is a [Left] instance.
   bool get isLeft => this is Left<L, R>;
 
@@ -128,6 +163,42 @@ sealed class Either<L, R> extends Equatable {
       Right() => this,
     };
   }
+
+  /// Returns a [Right] if this is a [Right] and the value satisfies [predicate],
+  /// otherwise returns a [Left].
+  ///
+  /// If this is a [Left], returns it unchanged.
+  /// If this is a [Right] and [predicate] returns true, returns this.
+  /// If this is a [Right] and [predicate] returns false, returns a [Left]
+  /// containing the result of [onFalse].
+  Either<L, R> filterOrElse(
+    bool Function(R r) predicate,
+    L Function() onFalse,
+  ) {
+    return switch (this) {
+      Left() => this,
+      Right(value: final r) => predicate(r) ? this : Left(onFalse()),
+    };
+  }
+
+  /// Executes [f] if this is a [Right] and returns this [Either] unchanged.
+  ///
+  /// Useful for side effects like logging or debugging.
+  /// Example:
+  /// ```dart
+  /// Either<String, int>.right(42)
+  ///   .tap((value) => print('Got value: $value'))
+  ///   .map((value) => value * 2);
+  /// ```
+  Either<L, R> tap(void Function(R r) f) {
+    switch (this) {
+      case Right(value: final r):
+        f(r);
+        return this;
+      case Left():
+        return this;
+    }
+  }
 }
 
 /// The left side of an [Either], representing an error or failure case.
@@ -140,6 +211,9 @@ class Left<L, R> extends Either<L, R> {
 
   @override
   List<Object?> get props => [value];
+
+  @override
+  String toString() => 'Left($value)';
 }
 
 /// The right side of an [Either], representing a success case.
@@ -152,4 +226,7 @@ class Right<L, R> extends Either<L, R> {
 
   @override
   List<Object?> get props => [value];
+
+  @override
+  String toString() => 'Right($value)';
 }

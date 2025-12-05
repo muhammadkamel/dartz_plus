@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.0] - 2025-12-06
+
+### Added
+
+- `foldAsync`: Asynchronous version of `fold` that accepts both synchronous and asynchronous functions.
+- `fromNullable`: Static method to create an `Either` from a nullable value.
+- `cond`: Static method to create an `Either` based on a condition.
+- `tryCatch`: Static method to execute a function and catch any exceptions as a `Left`.
+- `filterOrElse`: Method to filter `Right` values, converting to `Left` if the predicate fails.
+- `tap`: Method to execute a side effect on `Right` values without changing the result.
+- Improved `toString` implementation for better debugging.
+- comprehensive example application showcasing various features:
+  - Basic usage
+  - Async handling
+  - Error handling
+  - Functional programming enhancements
+  - Real-world API integration
+  - Chaining strategies
+
 ## [0.0.1] - 2024-12-XX
 
 ### Added
@@ -45,4 +64,3 @@ All notable changes to this project will be documented in this file.
 - Flutter SDK
 
 [0.0.1]: https://github.com/muhammadkamel/dartz_plus/releases/tag/v0.0.1
-
