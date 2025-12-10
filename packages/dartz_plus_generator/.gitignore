@@ -1,0 +1,14 @@
+# Standard Dart ignore
+.DS_Store
+.dart_tool/
+.packages
+build/
+coverage/
+doc/api/
+pubspec.lock
+pubspec_overrides.yaml
+
+# IDE files
+.idea/
+*.iml
+.vscode/

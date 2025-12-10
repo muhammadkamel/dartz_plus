@@ -1,20 +1,6 @@
-name: dartz_plus
-version: 0.1.0
-description: A functional programming library for Dart and Flutter providing type-safe error handling with Either type, functional composition, and async support.
-homepage: https://github.com/muhammadkamel/dartz_plus
-repository: https://github.com/muhammadkamel/dartz_plus
-license: MIT
-
+name: dartz_plus_workspace
+description: A Melos workspace for dartz_plus components.
 environment:
-  sdk: ^3.10.3
-
-dependencies:
-  equatable: ^2.0.7
-  meta: ^1.11.0
-
+  sdk: ^3.0.0
 dev_dependencies:
-  flutter_lints: ^6.0.0
-  flutter_test:
-    sdk: flutter
-  integration_test:
-    sdk: flutter
+  melos: ^3.0.0
