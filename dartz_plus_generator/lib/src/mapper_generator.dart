@@ -1,7 +1,9 @@
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
+import 'package:collection/collection.dart';
 import 'package:dartz_plus/dartz_plus.dart'; // For AutoMap annotation reference (optional, usually string check is safer/easier)
 import 'package:source_gen/source_gen.dart';
 
@@ -46,42 +48,67 @@ class MapperGenerator extends GeneratorForAnnotation<Mapper> {
       );
     }
 
-    final buffer = StringBuffer();
-    final String className = element.name!;
-    final String targetName = targetType.getDisplayString();
-    final extensionName = '${className}To${targetName}Mapper';
-
-    buffer.writeln('extension $extensionName on $className {');
-    buffer.writeln('  $targetName to$targetName() {');
-    buffer.writeln('    return $targetName(');
-
-    final targetElement = targetType.element as ClassElement?;
-    if (targetElement == null) {
+    final Element? targetElement = targetType.element;
+    if (targetElement is! ClassElement) {
       throw InvalidGenerationSourceError('Target type must be a class',
           element: element);
     }
 
-    final ConstructorElement? constructor = targetElement.unnamedConstructor;
+    final buffer = StringBuffer();
+
+    // 1. Forward Mapping: Annotated Class -> Target Type
+    _generateMapping(element, targetElement, buffer);
+
+    // 2. Reverse Mapping: Target Type -> Annotated Class
+    final bool reverse = annotation.peek('reverse')?.boolValue ?? true;
+    if (reverse) {
+      _generateMapping(targetElement, element, buffer);
+    }
+
+    return buffer.toString();
+  }
+
+  void _generateMapping(
+      ClassElement source, ClassElement target, StringBuffer buffer) {
+    final String sourceName = source.name ?? '';
+    final String targetName = target.name ?? '';
+    final extensionName = '${sourceName}To${targetName}Mapper';
+
+    buffer.writeln('extension $extensionName on $sourceName {');
+    buffer.writeln('  $targetName to$targetName() {');
+    buffer.writeln('    return $targetName(');
+
+    final ConstructorElement? constructor = target.unnamedConstructor;
     if (constructor == null) {
       throw InvalidGenerationSourceError(
-        'Target class ${targetElement.name} must have a default (unnamed) constructor.',
-        element: targetElement,
+        'Target class $targetName must have a default (unnamed) constructor.',
+        element: target,
       );
     }
 
-    final List<FieldElement> sourceFields = getAllFields(element);
+    final List<FieldElement> sourceFields = getAllFields(source);
 
-    // Access constructor parameters
     for (final FormalParameterElement param in constructor.formalParameters) {
-      final String paramName = param.name!;
+      final String paramName = param.name ?? '';
+
       // Find matching field in source
-      final FieldElement matchingField = sourceFields.firstWhere(
-        (f) => f.name == paramName,
-        orElse: () => throw InvalidGenerationSourceError(
-          'Could not find matching field for "$paramName" in $className',
-          element: element,
-        ),
-      );
+      final FieldElement? matchingField =
+          sourceFields.firstWhereOrNull((f) => f.name == paramName);
+
+      if (matchingField == null) {
+        // Smart Field Resolution:
+        // If the parameter is optional or nullable, we can skip it.
+        // It will use its default value or null.
+        if (param.isOptional ||
+            param.type.nullabilitySuffix != NullabilitySuffix.none) {
+          continue;
+        }
+
+        throw InvalidGenerationSourceError(
+          'Could not find matching field for required parameter "$paramName" in $sourceName while mapping to $targetName',
+          element: source,
+        );
+      }
 
       if (!param.isNamed) {
         buffer.writeln('      ${matchingField.name},');
@@ -93,7 +120,6 @@ class MapperGenerator extends GeneratorForAnnotation<Mapper> {
     buffer.writeln('    );');
     buffer.writeln('  }');
     buffer.writeln('}');
-    return buffer.toString();
   }
 
   /// recursively retrieves fields from the class and its superclasses

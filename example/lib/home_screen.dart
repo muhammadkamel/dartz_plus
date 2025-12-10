@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'features/profile/presentation/screens/profile_screen.dart';
 import 'screens/async_screen.dart';
 import 'screens/basic_usage_screen.dart';
 import 'screens/before_after_screen.dart';
@@ -79,6 +80,12 @@ class HomeScreen extends StatelessWidget {
             '12. Mapper (AutoMap)',
             const MapperScreen(),
             color: Colors.red.shade100,
+          ),
+          _buildNavItem(
+            context,
+            '13. Clean Arch Profile',
+            const ProfileScreen(),
+            color: Colors.teal.shade100,
           ),
         ],
       ),

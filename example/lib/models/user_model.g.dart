@@ -7,20 +7,14 @@ part of 'user_model.dart';
 // MapperGenerator
 // **************************************************************************
 
-extension UserDtoToUserMapper on UserDto {
-  User toUser() {
-    return User(name, age);
-  }
-}
-
-extension UserToUserDtoMapper on User {
-  UserDto toUserDto() {
-    return UserDto(name: name, age: age);
-  }
-}
-
-extension UserEntityToUserEntityMapper on UserEntity {
+extension UserDtoToUserEntityMapper on UserDto {
   UserEntity toUserEntity() {
     return UserEntity(name, age);
+  }
+}
+
+extension UserEntityToUserDtoMapper on UserEntity {
+  UserDto toUserDto() {
+    return UserDto(name: name, age: age);
   }
 }

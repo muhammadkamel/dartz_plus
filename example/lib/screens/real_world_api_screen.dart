@@ -30,7 +30,7 @@ class RealWorldApiScreen extends StatelessWidget {
   static const String _codeSnippet = '''
 final dio = Dio();
 
-Future<Either<String, User>> fetchUser(int id) async {
+Future<Either<String, UserEntity>> fetchUser(int id) async {
   // 1. Try-Catch for Network Request
   return Either.tryCatch<String, Response>(
     () => dio.get('https://dummyjson.com/users/\$id'),
@@ -45,7 +45,7 @@ Future<Either<String, User>> fetchUser(int id) async {
   // 3. Parse JSON to User Model
   .flatMap((data) {
     return Either.tryCatch(
-      () => User.fromJson(data as Map<String, dynamic>),
+      () => UserEntity.fromJson(data as Map<String, dynamic>),
       (e, s) => 'Parsing Error: \$e',
     );
   });
@@ -56,7 +56,7 @@ Future<Either<String, User>> fetchUser(int id) async {
     final buffer = StringBuffer();
     final dio = Dio();
 
-    Future<Either<String, User>> fetchUser(int id) async {
+    Future<Either<String, UserEntity>> fetchUser(int id) async {
       // 1. Perform Network Request (Async)
       Response response;
       try {
@@ -67,7 +67,7 @@ Future<Either<String, User>> fetchUser(int id) async {
 
       // 2. Validate Status Code & Parse
       // Explicitly type the starting Either to match L=String
-      return Either.right(User.fromJson(response.data));
+      return Either.right(UserEntity.fromJson(response.data));
     }
 
     buffer.writeln('--- Scenario 1: Fetch Existing User (ID: 1) ---');
@@ -92,7 +92,7 @@ Future<Either<String, User>> fetchUser(int id) async {
     } catch (e) {
       // We can demonstrate how to wrap an existing exception using Either.left
       // allowing it to flow into the same error handling pipeline if needed.
-      final result3 = Either<String, User>.left(
+      final result3 = Either<String, UserEntity>.left(
         'Network request failed (simulated): $e',
       );
       result3.fold(

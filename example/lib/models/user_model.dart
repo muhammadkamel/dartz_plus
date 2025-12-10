@@ -1,8 +1,9 @@
 import 'package:dartz_plus/dartz_plus.dart';
+import 'package:flutter/foundation.dart';
 
 part 'user_model.g.dart';
 
-@Mapper(User)
+@Mapper(UserEntity)
 class UserDto {
   final String name;
   final int age;
@@ -12,38 +13,23 @@ class UserDto {
   String toString() => 'UserDto(name: $name, age: $age)';
 }
 
-@Mapper(UserDto)
-class User {
-  final String name;
-  final int age;
-  User(this.name, this.age);
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      // data from dummyjson usually has firstName/lastName
-      '${json['firstName']} ${json['lastName']}',
-      json['age'] as int,
-    );
-  }
-
-  @override
-  String toString() => 'User(name: $name, age: $age)';
-}
-
-@Mapper(UserEntity)
+@immutable
 class UserEntity {
   final String name;
   final int age;
-  UserEntity(this.name, this.age);
+  final String? email;
+
+  const UserEntity(this.name, this.age, {this.email});
 
   factory UserEntity.fromJson(Map<String, dynamic> json) {
     return UserEntity(
       // data from dummyjson usually has firstName/lastName
       '${json['firstName']} ${json['lastName']}',
       json['age'] as int,
+      email: json['email'] as String?,
     );
   }
 
   @override
-  String toString() => 'User(name: $name, age: $age)';
+  String toString() => 'UserEntity(name: $name, age: $age)';
 }
