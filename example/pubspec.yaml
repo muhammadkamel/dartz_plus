@@ -18,6 +18,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  build_runner: ^2.4.6
+  dartz_plus_generator:
+    path: ../dartz_plus_generator
 
 flutter:
   uses-material-design: true

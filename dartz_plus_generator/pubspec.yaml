@@ -1,0 +1,17 @@
+name: dartz_plus_generator
+description: Code generator for dartz_plus AutoMapper.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  analyzer: ^9.0.0
+  build: ^4.0.3
+  dartz_plus:
+    path: ../
+  source_gen: ^4.1.1
+
+dev_dependencies:
+  build_runner: ^2.4.6
+  lints: ^2.1.1

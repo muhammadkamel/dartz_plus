@@ -1,34 +1,49 @@
-import 'package:equatable/equatable.dart';
+import 'package:dartz_plus/dartz_plus.dart';
 
-class User extends Equatable {
-  final int id;
-  final String email;
-  final String firstName;
-  final String lastName;
-  final String avatar;
+part 'user_model.g.dart';
 
-  const User({
-    required this.id,
-    required this.email,
-    required this.firstName,
-    required this.lastName,
-    required this.avatar,
-  });
+@Mapper(User)
+class UserDto {
+  final String name;
+  final int age;
+  UserDto({required this.name, required this.age});
+
+  @override
+  String toString() => 'UserDto(name: $name, age: $age)';
+}
+
+@Mapper(UserDto)
+class User {
+  final String name;
+  final int age;
+  User(this.name, this.age);
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'] as int,
-      email: json['email'] as String,
-      firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
-      avatar: json['image'] as String,
+      // data from dummyjson usually has firstName/lastName
+      '${json['firstName']} ${json['lastName']}',
+      json['age'] as int,
     );
   }
 
   @override
-  List<Object?> get props => [id, email, firstName, lastName, avatar];
+  String toString() => 'User(name: $name, age: $age)';
+}
+
+@Mapper(UserEntity)
+class UserEntity {
+  final String name;
+  final int age;
+  UserEntity(this.name, this.age);
+
+  factory UserEntity.fromJson(Map<String, dynamic> json) {
+    return UserEntity(
+      // data from dummyjson usually has firstName/lastName
+      '${json['firstName']} ${json['lastName']}',
+      json['age'] as int,
+    );
+  }
 
   @override
-  String toString() =>
-      'User(id: $id, name: $firstName $lastName, email: $email)';
+  String toString() => 'User(name: $name, age: $age)';
 }

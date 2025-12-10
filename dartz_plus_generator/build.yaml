@@ -1,0 +1,7 @@
+builders:
+  mapper_builder:
+    import: "package:dartz_plus_generator/builder.dart"
+    builder_factories: ["mapperBuilder"]
+    build_extensions: { ".dart": [".g.dart"] }
+    auto_apply: dependents
+    build_to: source
