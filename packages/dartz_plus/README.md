@@ -9,6 +9,7 @@ A functional programming library for Dart and Flutter, providing powerful abstra
 - **Functional Composition**: Chain operations and transform values safely with `map`, `flatMap`, and `bimap`
 - **Equatable Support**: Built-in equality comparison using Equatable
 - **Async Support**: Handle asynchronous operations with `foldAsync` (accepts both sync and async functions)
+- **Future Extensions**: Chain operations on `Future<Either>` directly with `map`, `flatMap`, `fold`, and `getOrThrow`
 - **Lazy Evaluation**: `getOrElse` and `orElse` use lazy evaluation for better performance
 
 ## Installation
@@ -124,7 +125,7 @@ void main() {
   final result = divide(10, 2)
       .flatMap((value) => multiply(value, 3))
       .flatMap((value) => divide(value, 2));
-  
+
   result.fold(
     (error) => print('Error: $error'),
     (value) => print('Result: $value'), // Prints: Result: 7
@@ -169,6 +170,39 @@ void main() {
     (value) => print('Result: $value'),
   );
 }
+    (value) => print('Result: $value'),
+  );
+}
+```
+
+### Future Extensions
+
+Easily work with `Future<Either<L, R>>`:
+
+```dart
+Future<Either<String, int>> fetchUserAge() async {
+  // ...
+  return Right(25);
+}
+
+void main() async {
+  final result = await fetchUserAge()
+      .map((age) => age + 1)
+      .flatMap((age) => Future.value(Right('Age is $age')));
+
+  result.fold(
+    (l) => print('Error: $l'),
+    (r) => print(r),
+  );
+
+  // Or get value/throw
+  try {
+    final age = await fetchUserAge().getOrThrow();
+    print(age);
+  } catch (e) {
+    print('Failed: $e');
+  }
+}
 ```
 
 ## API Reference
@@ -212,7 +246,6 @@ Represents the right side of an `Either`, typically used for success values.
 ## Requirements
 
 - Dart SDK: ^3.10.1
-- Flutter SDK
 
 ## Contributing
 
@@ -225,4 +258,3 @@ This project is open source and available under your chosen license.
 ## Links
 
 - [Homepage](https://github.com/muhammadkamel/dartz_plus)
-

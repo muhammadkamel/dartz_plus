@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
+import 'features/profile/presentation/screens/profile_screen.dart';
 import 'screens/async_screen.dart';
 import 'screens/basic_usage_screen.dart';
 import 'screens/before_after_screen.dart';
 import 'screens/chaining_screen.dart';
 import 'screens/error_handling_screen.dart';
 import 'screens/fp_enhancements_screen.dart';
+import 'screens/future_extensions_screen.dart';
 import 'screens/get_or_else_screen.dart';
+import 'screens/mapper_screen.dart';
 import 'screens/real_world_api_screen.dart';
 import 'screens/swap_screen.dart';
 import 'screens/transformation_screen.dart';
@@ -47,24 +50,42 @@ class HomeScreen extends StatelessWidget {
           ),
           _buildNavItem(context, '6. Swap', const SwapScreen()),
           _buildNavItem(context, '7. Async Operations', const AsyncScreen()),
+          _buildNavItem(
+            context,
+            '8. Future Extensions',
+            const FutureExtensionsScreen(),
+            color: Colors.purple.shade100,
+          ),
           const Divider(height: 32),
           _buildNavItem(
             context,
-            '8. Before vs After',
+            '9. Before vs After',
             const BeforeAfterScreen(),
             color: Colors.orange.shade100,
           ),
           _buildNavItem(
             context,
-            '9. FP Enhancements',
+            '10. FP Enhancements',
             const FPEnhancementsScreen(),
             color: Colors.green.shade100,
           ),
           _buildNavItem(
             context,
-            '10. Real World API Example',
+            '11. Real World API Example',
             const RealWorldApiScreen(),
             color: Colors.blue.shade100,
+          ),
+          _buildNavItem(
+            context,
+            '12. Mapper (AutoMap)',
+            const MapperScreen(),
+            color: Colors.red.shade100,
+          ),
+          _buildNavItem(
+            context,
+            '13. Clean Arch Profile',
+            const ProfileScreen(),
+            color: Colors.teal.shade100,
           ),
         ],
       ),

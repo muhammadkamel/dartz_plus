@@ -4,6 +4,7 @@
 *.pyc
 *.swp
 .DS_Store
+.melos_tool/
 .atom/
 .buildlog/
 .history
