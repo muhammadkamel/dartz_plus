@@ -1,6 +1,6 @@
 # Dartz Plus Generator
 
-A code generator for [dartz_plus](https://pub.dev/packages/dartz_plus) that automatically creates mapping extensions between your data transfer objects (DTOs) and domain entities.
+A code generator that automatically creates mapping extensions between your data transfer objects (DTOs) and domain entities.
 
 ## Features
 
@@ -9,18 +9,16 @@ A code generator for [dartz_plus](https://pub.dev/packages/dartz_plus) that auto
 - **Customizable**: Control whether reverse mapping is generated
 - **Smart Field Resolution**: Handles optional and nullable parameters intelligently
 - **Inheritance Support**: Works with class hierarchies by collecting fields from superclasses
+- **No Runtime Dependencies**: Pure code generation with no additional runtime dependencies
 
 ## Installation
 
-Add `dartz_plus_generator` as a dev dependency and `dartz_plus` as a regular dependency in your `pubspec.yaml`:
+Add `dartz_plus_generator` as a dev dependency in your `pubspec.yaml`:
 
 ```yaml
-dependencies:
-  dartz_plus: ^0.1.0
-
 dev_dependencies:
   build_runner: ^2.10.4
-  dartz_plus_generator: ^0.1.0
+  dartz_plus_generator: ^0.1.1
 ```
 
 Then run:
@@ -36,7 +34,7 @@ flutter pub get
 1. Annotate your DTO class with `@Mapper` and specify the target entity type:
 
 ```dart
-import 'package:dartz_plus/dartz_plus.dart';
+import 'package:dartz_plus_generator/annotations.dart';
 
 part 'user_model.g.dart'; // Include the generated file
 

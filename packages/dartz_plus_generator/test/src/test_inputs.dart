@@ -1,8 +1,7 @@
-import 'package:dartz_plus/dartz_plus.dart';
+import 'package:dartz_plus_generator/annotations.dart';
 import 'package:source_gen_test/source_gen_test.dart';
 
-@ShouldGenerate(
-  r'''
+@ShouldGenerate(r'''
 extension HappyPathDtoToHappyPathEntityMapper on HappyPathDto {
   HappyPathEntity toHappyPathEntity() {
     return HappyPathEntity(name: name, age: age);
@@ -14,8 +13,7 @@ extension HappyPathEntityToHappyPathDtoMapper on HappyPathEntity {
     return HappyPathDto(name: name, age: age);
   }
 }
-''',
-)
+''')
 @Mapper(HappyPathEntity)
 class HappyPathDto {
   HappyPathDto({required this.name, required this.age});
@@ -29,8 +27,7 @@ class HappyPathEntity {
   final int age;
 }
 
-@ShouldGenerate(
-  r'''
+@ShouldGenerate(r'''
 extension SmartResolutionDtoToSmartResolutionEntityMapper
     on SmartResolutionDto {
   SmartResolutionEntity toSmartResolutionEntity() {
@@ -44,8 +41,7 @@ extension SmartResolutionEntityToSmartResolutionDtoMapper
     return SmartResolutionDto(name: name);
   }
 }
-''',
-)
+''')
 @Mapper(SmartResolutionEntity)
 class SmartResolutionDto {
   // Missing 'bio' (optional) and 'email' (nullable)
@@ -77,8 +73,7 @@ class SmartResolutionEntityRefined {
   final String? nullable;
 }
 
-@ShouldGenerate(
-  r'''
+@ShouldGenerate(r'''
 extension SmartResolutionDto2ToSmartResolutionEntityRefinedMapper
     on SmartResolutionDto2 {
   SmartResolutionEntityRefined toSmartResolutionEntityRefined() {
@@ -92,8 +87,7 @@ extension SmartResolutionEntityRefinedToSmartResolutionDto2Mapper
     return SmartResolutionDto2(name);
   }
 }
-''',
-)
+''')
 @Mapper(SmartResolutionEntityRefined)
 class SmartResolutionDto2 {
   SmartResolutionDto2(this.name);
@@ -101,7 +95,8 @@ class SmartResolutionDto2 {
 }
 
 @ShouldThrow(
-    'Could not find matching field for required parameter "age" in FailureDto while mapping to FailureEntity')
+  'Could not find matching field for required parameter "age" in FailureDto while mapping to FailureEntity',
+)
 @Mapper(FailureEntity)
 class FailureDto {
   FailureDto(this.name);
@@ -118,8 +113,7 @@ class FailureEntity {
 // -----------------------------------------------------------------------------
 // INHERITANCE TEST
 // -----------------------------------------------------------------------------
-@ShouldGenerate(
-  r'''
+@ShouldGenerate(r'''
 extension InheritanceDtoToInheritanceEntityMapper on InheritanceDto {
   InheritanceEntity toInheritanceEntity() {
     return InheritanceEntity(id: id, name: name);
@@ -131,8 +125,7 @@ extension InheritanceEntityToInheritanceDtoMapper on InheritanceEntity {
     return InheritanceDto(id: id, name: name);
   }
 }
-''',
-)
+''')
 @Mapper(InheritanceEntity)
 class InheritanceDto extends BaseDto {
   InheritanceDto({required super.id, required this.name});
@@ -153,15 +146,13 @@ class InheritanceEntity {
 // -----------------------------------------------------------------------------
 // REVERSE = FALSE TEST
 // -----------------------------------------------------------------------------
-@ShouldGenerate(
-  r'''
+@ShouldGenerate(r'''
 extension ReverseFalseDtoToReverseFalseEntityMapper on ReverseFalseDto {
   ReverseFalseEntity toReverseFalseEntity() {
     return ReverseFalseEntity(name: name);
   }
 }
-''',
-)
+''')
 @Mapper(ReverseFalseEntity, reverse: false)
 class ReverseFalseDto {
   ReverseFalseDto(this.name);
@@ -176,8 +167,7 @@ class ReverseFalseEntity {
 // -----------------------------------------------------------------------------
 // POSITIONAL PARAMETERS TEST
 // -----------------------------------------------------------------------------
-@ShouldGenerate(
-  r'''
+@ShouldGenerate(r'''
 extension PositionalDtoToPositionalEntityMapper on PositionalDto {
   PositionalEntity toPositionalEntity() {
     return PositionalEntity(name);
@@ -189,8 +179,7 @@ extension PositionalEntityToPositionalDtoMapper on PositionalEntity {
     return PositionalDto(name);
   }
 }
-''',
-)
+''')
 @Mapper(PositionalEntity)
 class PositionalDto {
   PositionalDto(this.name);
@@ -220,7 +209,8 @@ class InvalidTargetTypeDto {}
 // ERROR: TARGET NO DEFAULT CONSTRUCTOR
 // -----------------------------------------------------------------------------
 @ShouldThrow(
-    'Target class NoCtorEntity must have a default (unnamed) constructor.')
+  'Target class NoCtorEntity must have a default (unnamed) constructor.',
+)
 @Mapper(NoCtorEntity)
 class NoCtorDto {
   NoCtorDto(this.name);

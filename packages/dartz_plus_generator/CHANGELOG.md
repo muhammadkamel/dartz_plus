@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2025-12-15
+
+### Changed
+
+- **Breaking**: Moved `Mapper` annotation from `dartz_plus` package into `dartz_plus_generator`
+- Updated all imports to use `package:dartz_plus_generator/annotations.dart`
+- Removed `dartz_plus` dependency - generator is now fully independent
+- Users should now import `@Mapper` annotation from `dartz_plus_generator` instead of `dartz_plus`
+
+### Migration Guide
+
+If upgrading from 0.1.0, update your imports:
+
+```dart
+// Before
+import 'package:dartz_plus/dartz_plus.dart';
+
+// After
+import 'package:dartz_plus_generator/annotations.dart';
+```
+
 ## [0.1.0] - 2025-12-15
 
 ### Added
@@ -22,21 +43,6 @@ All notable changes to this project will be documented in this file.
   - Missing required fields
 - `build.yaml` configuration for automatic code generation
 - Full integration with `build_runner`
-
-### Features
-
-- **Automatic Mapper Generation**: Annotate DTOs with `@Mapper(TargetEntity)` to generate mapping extensions
-- **Type Safety**: Compile-time validation ensures all required fields are mapped
-- **Flexibility**: Control reverse mapping generation with `reverse` parameter
-- **Smart Resolution**: Automatically handles optional and nullable fields
-
-### Dependencies
-
-- `analyzer: ^9.0.0`
-- `build: ^4.0.3`
-- `collection: ^1.19.1`
-- `dartz_plus`: path dependency
-- `source_gen: ^4.1.1`
 
 ### Dev Dependencies
 

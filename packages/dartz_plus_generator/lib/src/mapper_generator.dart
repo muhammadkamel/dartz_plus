@@ -4,7 +4,7 @@ import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:collection/collection.dart';
-import 'package:dartz_plus/dartz_plus.dart'; // For AutoMap annotation reference (optional, usually string check is safer/easier)
+import 'package:dartz_plus_generator/annotations.dart';
 import 'package:source_gen/source_gen.dart';
 
 /// Generator for @Mapper annotations.
@@ -50,8 +50,10 @@ class MapperGenerator extends GeneratorForAnnotation<Mapper> {
 
     final Element? targetElement = targetType.element;
     if (targetElement is! ClassElement) {
-      throw InvalidGenerationSourceError('Target type must be a class',
-          element: element);
+      throw InvalidGenerationSourceError(
+        'Target type must be a class',
+        element: element,
+      );
     }
 
     final buffer = StringBuffer();
@@ -69,7 +71,10 @@ class MapperGenerator extends GeneratorForAnnotation<Mapper> {
   }
 
   void _generateMapping(
-      ClassElement source, ClassElement target, StringBuffer buffer) {
+    ClassElement source,
+    ClassElement target,
+    StringBuffer buffer,
+  ) {
     final String sourceName = source.name ?? '';
     final String targetName = target.name ?? '';
     final extensionName = '${sourceName}To${targetName}Mapper';
@@ -92,8 +97,9 @@ class MapperGenerator extends GeneratorForAnnotation<Mapper> {
       final String paramName = param.name ?? '';
 
       // Find matching field in source
-      final FieldElement? matchingField =
-          sourceFields.firstWhereOrNull((f) => f.name == paramName);
+      final FieldElement? matchingField = sourceFields.firstWhereOrNull(
+        (f) => f.name == paramName,
+      );
 
       if (matchingField == null) {
         // Smart Field Resolution:

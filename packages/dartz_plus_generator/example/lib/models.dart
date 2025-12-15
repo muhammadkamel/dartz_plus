@@ -1,4 +1,4 @@
-import 'package:dartz_plus/dartz_plus.dart';
+import 'package:dartz_plus_generator/annotations.dart';
 
 part 'models.g.dart';
 
