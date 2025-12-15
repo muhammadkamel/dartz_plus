@@ -1,6 +1,6 @@
 name: dartz_plus_workspace
 description: A Melos workspace for dartz_plus components.
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.10.4
 dev_dependencies:
-  melos: ^3.0.0
+  melos: ^7.3.0
