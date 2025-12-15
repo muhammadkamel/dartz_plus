@@ -21,7 +21,7 @@ All notable changes to this project will be documented in this file.
   - Real-world API integration
   - Chaining strategies
 
-## [0.0.1] - 2024-12-XX
+## [0.0.1] - 2025-12-XX
 
 ### Added
 
