@@ -39,17 +39,17 @@ Add dartz_plus to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  dartz_plus: ^0.1.0
+  dartz_plus: ^0.2.0
 ```
 
 For code generation, also add:
 
 ```yaml
 dependencies:
-  dartz_plus: ^0.1.0
+  dartz_plus: ^0.2.0
 
 dev_dependencies:
-  dartz_plus_generator: ^0.1.0
+  dartz_plus_generator: ^0.1.1
   build_runner: ^2.4.0
 ```
 
