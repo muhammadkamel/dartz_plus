@@ -18,7 +18,7 @@ Add `dartz_plus` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  dartz_plus: ^0.2.0
+  dartz_plus: ^0.2.1
 ```
 
 Then run:
