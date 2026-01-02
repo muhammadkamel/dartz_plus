@@ -1,4 +1,5 @@
-/// Annotation to mark a class as a Mapper.
+part of '../dartz_plus.dart';
+
 ///
 /// Use this annotation to generate mapping extension methods for data classes.
 ///

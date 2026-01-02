@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2026-01-03
+
+- Refactored internal library structure to use `part` and `part of` directives, enforcing a single entry point via `package:dartz_plus/dartz_plus.dart` to prevent direct import of internal files.
+
 ## [0.2.0] - 2026-01-03
 
 - Added new type mapper to support auto mapper with `dartz_plus_generator` package.

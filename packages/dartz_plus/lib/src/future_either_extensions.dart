@@ -1,6 +1,4 @@
-import 'dart:async';
-
-import 'either.dart';
+part of '../dartz_plus.dart';
 
 /// Extensions for [Future] of [Either] to simplify handling async [Either] results.
 extension FutureEitherExtensions<L, R> on Future<Either<L, R>> {
