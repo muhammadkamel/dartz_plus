@@ -1,5 +1,5 @@
 name: dartz_plus
-version: 0.1.0
+version: 0.2.0
 description: A functional programming library for Dart and Flutter providing type-safe error handling with Either type, functional composition, and async support.
 homepage: https://github.com/muhammadkamel/dartz_plus
 repository: https://github.com/muhammadkamel/dartz_plus
