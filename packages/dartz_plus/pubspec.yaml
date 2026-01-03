@@ -5,8 +5,10 @@ homepage: https://github.com/muhammadkamel/dartz_plus
 repository: https://github.com/muhammadkamel/dartz_plus
 license: MIT
 
+resolution: workspace
+
 environment:
-  sdk: ^3.10.4
+  sdk: ">=3.10.4 <4.0.0"
 
 dependencies:
   equatable: ^2.0.7

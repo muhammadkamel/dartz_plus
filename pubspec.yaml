@@ -1,6 +1,95 @@
 name: dartz_plus_workspace
 description: A Melos workspace for dartz_plus components.
+repository: https://github.com/muhammadkamel/dartz_plus
+publish_to: none
+
 environment:
-  sdk: ^3.10.4
+  sdk: ">=3.10.4 <4.0.0"
+
+workspace:
+  - packages/dartz_plus
+  - packages/dartz_plus/example
+  - packages/dartz_plus_generator
+  - packages/dartz_plus_generator/example
+
 dev_dependencies:
   melos: ^7.3.0
+
+dependency_overrides:
+  test_api: 0.7.8
+
+melos:
+  command:
+    version:
+      branch: master
+      releaseUrl: true
+      includeCommitId: true
+      linkToCommits: true
+
+    bootstrap:
+      environment:
+        sdk: ">=3.10.4 <4.0.0"
+
+  scripts:
+    lint:all:
+      steps:
+        - analyze
+        - format-check
+      description: Run all static analysis checks.
+
+    analyze:
+      run: melos exec dart analyze .
+      description: Run `dart analyze` for all packages.
+
+    format:
+      run: melos exec dart format .
+      description: Run `dart format` for all packages.
+
+    format-check:
+      run: melos exec dart format . --set-exit-if-changed
+      description: Run `dart format` checks for all packages.
+
+    test:
+      run: melos run test:select --no-select
+      description: Run all tests in this project.
+
+    test:select:
+      run: melos exec -c 1 -- flutter test
+      packageFilters:
+        dirExists: test
+      description: Run `flutter test` for selected packages.
+
+    test:dart:
+      exec: dart test
+      packageFilters:
+        noDependsOn: flutter_test
+        dirExists: test
+      description: Run `dart test` for Dart-only packages.
+
+    coverage:
+      steps:
+        - melos exec -- flutter test --coverage
+        - melos exec -- genhtml coverage/lcov.info --output-directory=coverage/
+      packageFilters:
+        dirExists: test
+      description: Generate coverage for the selected package.
+
+    build:
+      exec: dart run build_runner build -d
+      description: Run build_runner in packages that depend on it.
+      packageFilters:
+        dependsOn: build_runner
+
+    build:watch:
+      exec: dart run build_runner watch -d
+      description: Run build_runner in watch mode.
+      packageFilters:
+        dependsOn: build_runner
+
+    upgrade:
+      run: melos exec flutter pub upgrade
+      description: Run `flutter pub upgrade` for all packages.
+
+    clean:
+      run: melos exec flutter clean
+      description: Clean all packages.
