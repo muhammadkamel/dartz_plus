@@ -1,5 +1,4 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// dart format width=80
 
 part of 'user_model.dart';
 
@@ -7,14 +6,14 @@ part of 'user_model.dart';
 // MapperGenerator
 // **************************************************************************
 
-extension UserDtoToUserEntityMapper on UserDto {
+extension UserModelToUserEntityMapper on UserModel {
   UserEntity toUserEntity() {
     return UserEntity(name, age);
   }
 }
 
-extension UserEntityToUserDtoMapper on UserEntity {
-  UserDto toUserDto() {
-    return UserDto(name: name, age: age);
+extension UserEntityToUserModelMapper on UserEntity {
+  UserModel toUserModel() {
+    return UserModel(name: name, age: age);
   }
 }

@@ -9,4 +9,4 @@ export 'annotations.dart';
 
 /// Builder factory for the MapperGenerator.
 Builder mapperBuilder(BuilderOptions options) =>
-    PartBuilder([MapperGenerator()], '.g.dart');
+    SharedPartBuilder([MapperGenerator()], 'mapper_builder');

@@ -67,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(height: 20),
                         const Text(
-                          'Mapped from ProfileDto via Clean Architecture!',
+                          'Mapped from ProfileEntity via Clean Architecture!',
                         ),
                       ],
                     ),

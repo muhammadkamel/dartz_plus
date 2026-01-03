@@ -1,5 +1,0 @@
-targets:
-  $default:
-    builders:
-      dartz_plus_generator|mapper:
-        enabled: true

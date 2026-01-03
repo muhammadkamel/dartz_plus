@@ -4,13 +4,13 @@ import 'package:flutter/foundation.dart';
 part 'user_model.g.dart';
 
 @Mapper(UserEntity)
-class UserDto {
+class UserModel {
   final String name;
   final int age;
-  UserDto({required this.name, required this.age});
+  UserModel({required this.name, required this.age});
 
   @override
-  String toString() => 'UserDto(name: $name, age: $age)';
+  String toString() => 'UserModel(name: $name, age: $age)';
 }
 
 @immutable

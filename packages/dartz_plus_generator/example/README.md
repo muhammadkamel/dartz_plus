@@ -24,20 +24,20 @@ This will generate `lib/models.g.dart` with the mapper extensions.
 
 ```dart
 @Mapper(UserEntity)
-class UserDto {
+class UserModel {
   final String name;
   final int age;
   // ...
 }
 ```
 
-Generates both `userDto.toUserEntity()` and `userEntity.toUserDto()` methods.
+Generates both `userModel.toUserEntity()` and `userEntity.toUserModel()` methods.
 
 ### Example 2: Mapping with Optional Fields
 
 ```dart
 @Mapper(ProductEntity)
-class ProductDto {
+class ProductModel {
   final String id;
   final String name;
   final double price;
@@ -51,12 +51,12 @@ The generator handles optional fields intelligently - they will be null if not p
 
 ```dart
 @Mapper(OrderEntity, reverse: false)
-class OrderDto {
+class OrderModel {
   // ...
 }
 ```
 
-Only generates `orderDto.toOrderEntity()` - no reverse mapping.
+Only generates `orderModel.toOrderEntity()` - no reverse mapping.
 
 ## Running the Example
 

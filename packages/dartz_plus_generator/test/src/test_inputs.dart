@@ -1,22 +1,22 @@
-import 'package:dartz_plus_generator/annotations.dart';
+import 'package:dartz_plus/dartz_plus.dart';
 import 'package:source_gen_test/source_gen_test.dart';
 
 @ShouldGenerate(r'''
-extension HappyPathDtoToHappyPathEntityMapper on HappyPathDto {
+extension HappyPathModelToHappyPathEntityMapper on HappyPathModel {
   HappyPathEntity toHappyPathEntity() {
     return HappyPathEntity(name: name, age: age);
   }
 }
 
-extension HappyPathEntityToHappyPathDtoMapper on HappyPathEntity {
-  HappyPathDto toHappyPathDto() {
-    return HappyPathDto(name: name, age: age);
+extension HappyPathEntityToHappyPathModelMapper on HappyPathEntity {
+  HappyPathModel toHappyPathModel() {
+    return HappyPathModel(name: name, age: age);
   }
 }
 ''')
 @Mapper(HappyPathEntity)
-class HappyPathDto {
-  HappyPathDto({required this.name, required this.age});
+class HappyPathModel {
+  HappyPathModel({required this.name, required this.age});
   final String name;
   final int age;
 }
@@ -28,42 +28,31 @@ class HappyPathEntity {
 }
 
 @ShouldGenerate(r'''
-extension SmartResolutionDtoToSmartResolutionEntityMapper
-    on SmartResolutionDto {
+extension SmartResolutionModelToSmartResolutionEntityMapper
+    on SmartResolutionModel {
   SmartResolutionEntity toSmartResolutionEntity() {
     return SmartResolutionEntity(name: name);
   }
 }
 
-extension SmartResolutionEntityToSmartResolutionDtoMapper
+extension SmartResolutionEntityToSmartResolutionModelMapper
     on SmartResolutionEntity {
-  SmartResolutionDto toSmartResolutionDto() {
-    return SmartResolutionDto(name: name);
+  SmartResolutionModel toSmartResolutionModel() {
+    return SmartResolutionModel(name: name);
   }
 }
 ''')
 @Mapper(SmartResolutionEntity)
-class SmartResolutionDto {
-  // Missing 'bio' (optional) and 'email' (nullable)
-  SmartResolutionDto({required this.name});
+class SmartResolutionModel {
+  SmartResolutionModel({required this.name});
   final String name;
 }
 
 class SmartResolutionEntity {
-  // email is nullable via default value or null? no email is just string but nullable type
-  // Wait, email is 'test field', let's make it explicitly nullable or optional in constructor.
-
   SmartResolutionEntity({required this.name, this.bio, this.email = ''});
   final String name;
   final String? bio;
   final String email;
-  // Wait, my smart resolution checks param.isOptional || param.type.isNullable (renamed to nullability check)
-
-  /*
-  Let's refine SmartResolutionEntity to test both cases:
-  1. Named Optional: {this.optional}
-  2. Nullable Position: String? nullable
-  */
 }
 
 class SmartResolutionEntityRefined {
@@ -74,66 +63,62 @@ class SmartResolutionEntityRefined {
 }
 
 @ShouldGenerate(r'''
-extension SmartResolutionDto2ToSmartResolutionEntityRefinedMapper
-    on SmartResolutionDto2 {
+extension SmartResolutionModel2ToSmartResolutionEntityRefinedMapper
+    on SmartResolutionModel2 {
   SmartResolutionEntityRefined toSmartResolutionEntityRefined() {
     return SmartResolutionEntityRefined(name);
   }
 }
 
-extension SmartResolutionEntityRefinedToSmartResolutionDto2Mapper
+extension SmartResolutionEntityRefinedToSmartResolutionModel2Mapper
     on SmartResolutionEntityRefined {
-  SmartResolutionDto2 toSmartResolutionDto2() {
-    return SmartResolutionDto2(name);
+  SmartResolutionModel2 toSmartResolutionModel2() {
+    return SmartResolutionModel2(name);
   }
 }
 ''')
 @Mapper(SmartResolutionEntityRefined)
-class SmartResolutionDto2 {
-  SmartResolutionDto2(this.name);
+class SmartResolutionModel2 {
+  SmartResolutionModel2(this.name);
   final String name;
 }
 
 @ShouldThrow(
-  'Could not find matching field for required parameter "age" in FailureDto while mapping to FailureEntity',
+  'Could not find matching field or constructor parameter for required parameter "age" in FailureModel while mapping to FailureEntity',
 )
 @Mapper(FailureEntity)
-class FailureDto {
-  FailureDto(this.name);
+class FailureModel {
+  FailureModel(this.name);
   final String name;
 }
 
 class FailureEntity {
-  // Required and missing in Dto
   FailureEntity(this.name, this.age);
   final String name;
   final int age;
 }
 
-// -----------------------------------------------------------------------------
-// INHERITANCE TEST
-// -----------------------------------------------------------------------------
 @ShouldGenerate(r'''
-extension InheritanceDtoToInheritanceEntityMapper on InheritanceDto {
+extension InheritanceModelToInheritanceEntityMapper on InheritanceModel {
   InheritanceEntity toInheritanceEntity() {
     return InheritanceEntity(id: id, name: name);
   }
 }
 
-extension InheritanceEntityToInheritanceDtoMapper on InheritanceEntity {
-  InheritanceDto toInheritanceDto() {
-    return InheritanceDto(id: id, name: name);
+extension InheritanceEntityToInheritanceModelMapper on InheritanceEntity {
+  InheritanceModel toInheritanceModel() {
+    return InheritanceModel(id: id, name: name);
   }
 }
 ''')
 @Mapper(InheritanceEntity)
-class InheritanceDto extends BaseDto {
-  InheritanceDto({required super.id, required this.name});
+class InheritanceModel extends BaseModel {
+  InheritanceModel({required super.id, required this.name});
   final String name;
 }
 
-class BaseDto {
-  BaseDto({required this.id});
+class BaseModel {
+  BaseModel({required this.id});
   final String id;
 }
 
@@ -143,19 +128,16 @@ class InheritanceEntity {
   final String name;
 }
 
-// -----------------------------------------------------------------------------
-// REVERSE = FALSE TEST
-// -----------------------------------------------------------------------------
 @ShouldGenerate(r'''
-extension ReverseFalseDtoToReverseFalseEntityMapper on ReverseFalseDto {
+extension ReverseFalseModelToReverseFalseEntityMapper on ReverseFalseModel {
   ReverseFalseEntity toReverseFalseEntity() {
     return ReverseFalseEntity(name: name);
   }
 }
 ''')
 @Mapper(ReverseFalseEntity, reverse: false)
-class ReverseFalseDto {
-  ReverseFalseDto(this.name);
+class ReverseFalseModel {
+  ReverseFalseModel(this.name);
   final String name;
 }
 
@@ -164,59 +146,195 @@ class ReverseFalseEntity {
   final String name;
 }
 
-// -----------------------------------------------------------------------------
-// POSITIONAL PARAMETERS TEST
-// -----------------------------------------------------------------------------
 @ShouldGenerate(r'''
-extension PositionalDtoToPositionalEntityMapper on PositionalDto {
+extension PositionalModelToPositionalEntityMapper on PositionalModel {
   PositionalEntity toPositionalEntity() {
     return PositionalEntity(name);
   }
 }
 
-extension PositionalEntityToPositionalDtoMapper on PositionalEntity {
-  PositionalDto toPositionalDto() {
-    return PositionalDto(name);
+extension PositionalEntityToPositionalModelMapper on PositionalEntity {
+  PositionalModel toPositionalModel() {
+    return PositionalModel(name);
   }
 }
 ''')
 @Mapper(PositionalEntity)
-class PositionalDto {
-  PositionalDto(this.name);
+class PositionalModel {
+  PositionalModel(this.name);
   final String name;
 }
 
 class PositionalEntity {
   PositionalEntity(this.name);
-  final String name; // Positional
+  final String name;
 }
 
-// -----------------------------------------------------------------------------
-// ERROR: NON-CLASS ELEMENT (ENUM)
-// -----------------------------------------------------------------------------
 @ShouldThrow('@Mapper can only be applied to classes.')
 @Mapper(ReverseFalseEntity)
 enum EnumMapper { A, B }
 
-// -----------------------------------------------------------------------------
-// ERROR: TARGET IS NOT A CLASS
-// -----------------------------------------------------------------------------
 @ShouldThrow('Target class int must have a default (unnamed) constructor.')
 @Mapper(int)
-class InvalidTargetTypeDto {}
+class InvalidTargetTypeModel {}
 
-// -----------------------------------------------------------------------------
-// ERROR: TARGET NO DEFAULT CONSTRUCTOR
-// -----------------------------------------------------------------------------
 @ShouldThrow(
   'Target class NoCtorEntity must have a default (unnamed) constructor.',
 )
 @Mapper(NoCtorEntity)
-class NoCtorDto {
-  NoCtorDto(this.name);
+class NoCtorModel {
+  NoCtorModel(this.name);
   final String name;
 }
 
 class NoCtorEntity {
   NoCtorEntity.named();
+}
+
+// -----------------------------------------------------------------------------
+// NEW: FREEZED-LIKE TEST (MOCKING FREEZED STRUCTURE)
+// -----------------------------------------------------------------------------
+@ShouldGenerate(r'''
+extension FreezedSourceModelToFreezedSourceEntityMapper on FreezedSourceModel {
+  FreezedSourceEntity toFreezedSourceEntity() {
+    return FreezedSourceEntity(id: id, name: name);
+  }
+}
+
+extension FreezedSourceEntityToFreezedSourceModelMapper on FreezedSourceEntity {
+  FreezedSourceModel toFreezedSourceModel() {
+    return FreezedSourceModel(id: id, name: name);
+  }
+}
+''')
+@Mapper(FreezedSourceEntity)
+class FreezedSourceModel {
+  // Freezed classes have a factory constructor and properties are usually
+  // getters. In our generator we check the factory constructor parameters
+  // if fields are missing.
+  factory FreezedSourceModel({required int id, required String name}) =
+      _FreezedSourceModel;
+
+  // These getters would be generated by Freezed
+  int get id => 0;
+  String get name => '';
+}
+
+class _FreezedSourceModel implements FreezedSourceModel {
+  _FreezedSourceModel({required this.id, required this.name});
+  @override
+  final int id;
+  @override
+  final String name;
+}
+
+class FreezedSourceEntity {
+  FreezedSourceEntity({required this.id, required this.name});
+  final int id;
+  final String name;
+}
+
+// -----------------------------------------------------------------------------
+// NEW: NESTED MAPPING TEST
+// -----------------------------------------------------------------------------
+@ShouldGenerate(r'''
+extension NestedModelToNestedEntityMapper on NestedModel {
+  NestedEntity toNestedEntity() {
+    return NestedEntity(
+      id: id,
+      item: item.toNestedItemEntity(),
+      items: items.map((e) => e.toNestedItemEntity()).toList(),
+    );
+  }
+}
+
+extension NestedEntityToNestedModelMapper on NestedEntity {
+  NestedModel toNestedModel() {
+    return NestedModel(
+      id: id,
+      item: item.toNestedItemModel(),
+      items: items.map((e) => e.toNestedItemModel()).toList(),
+    );
+  }
+}
+''')
+@Mapper(NestedEntity)
+class NestedModel {
+  NestedModel({required this.id, required this.item, required this.items});
+  final int id;
+  final NestedItemModel item;
+  final List<NestedItemModel> items;
+}
+
+class NestedEntity {
+  NestedEntity({required this.id, required this.item, required this.items});
+  final int id;
+  final NestedItemEntity item;
+  final List<NestedItemEntity> items;
+}
+
+class NestedItemModel {
+  NestedItemModel(this.name);
+  final String name;
+}
+
+class NestedItemEntity {
+  NestedItemEntity(this.name);
+  final String name;
+}
+
+// -----------------------------------------------------------------------------
+// NEW: NAMED TARGET TEST
+// -----------------------------------------------------------------------------
+@ShouldGenerate(r'''
+extension NamedTargetModelToNamedTargetEntityMapper on NamedTargetModel {
+  NamedTargetEntity toNamedTargetEntity() {
+    return NamedTargetEntity(name: name);
+  }
+}
+
+extension NamedTargetEntityToNamedTargetModelMapper on NamedTargetEntity {
+  NamedTargetModel toNamedTargetModel() {
+    return NamedTargetModel(name);
+  }
+}
+''')
+@Mapper(NamedTargetEntity)
+class NamedTargetModel {
+  NamedTargetModel(this.name);
+  final String name;
+}
+
+class NamedTargetEntity {
+  NamedTargetEntity({required this.name});
+  final String name;
+}
+
+// -----------------------------------------------------------------------------
+// NEW: MIXED CONSTRUCTOR PARAMETERS TEST
+// -----------------------------------------------------------------------------
+@ShouldGenerate(r'''
+extension MixedCtorModelToMixedCtorEntityMapper on MixedCtorModel {
+  MixedCtorEntity toMixedCtorEntity() {
+    return MixedCtorEntity(id, name: name);
+  }
+}
+
+extension MixedCtorEntityToMixedCtorModelMapper on MixedCtorEntity {
+  MixedCtorModel toMixedCtorModel() {
+    return MixedCtorModel(id: id, name: name);
+  }
+}
+''')
+@Mapper(MixedCtorEntity)
+class MixedCtorModel {
+  MixedCtorModel({required this.id, required this.name});
+  final int id;
+  final String name;
+}
+
+class MixedCtorEntity {
+  MixedCtorEntity(this.id, {required this.name});
+  final int id;
+  final String name;
 }
