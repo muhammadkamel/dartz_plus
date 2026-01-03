@@ -1,4 +1,3 @@
-/// Annotation to mark a class as a Mapper.
 ///
 /// Use this annotation to generate mapping extension methods for data classes.
 ///
@@ -14,7 +13,8 @@ class Mapper {
   ///
   /// [target] is the Type of the class you want to map TO.
   /// [reverse] if true, generates a reverse mapping method (Target -> Source).
-  const Mapper(this.target, {this.reverse = true});
+  /// [constructor] the name of the target constructor to use.
+  const Mapper(this.target, {this.reverse = true, this.constructor});
 
   /// The target type to map to.
   ///
@@ -23,4 +23,27 @@ class Mapper {
 
   /// Whether to generate the reverse mapping (Target -> Source).
   final bool reverse;
+
+  /// The name of the target class constructor to use.
+  /// If null, the default (unnamed) constructor is used.
+  final String? constructor;
+}
+
+///
+/// Annotation to map a source field to a target field with a different name.
+///
+class MapTo {
+  /// The name of the target field this field maps to.
+  final String name;
+
+  /// Creates a MapTo annotation.
+  const MapTo(this.name);
+}
+
+///
+/// Annotation to ignore a field during mapping.
+///
+class IgnoreMap {
+  /// Creates an IgnoreMap annotation.
+  const IgnoreMap();
 }

@@ -78,3 +78,35 @@ class OrderEntity {
   String toString() =>
       'OrderEntity(orderId: $orderId, customerName: $customerName)';
 }
+
+// Example 4: Complex mapping with Renames, Ignores, and Custom Constructor
+@Mapper(AdvancedEntity, constructor: 'fromDto')
+class AdvancedModel {
+  @MapTo('fullName')
+  final String name;
+
+  @IgnoreMap()
+  final String? internalId;
+
+  final int status;
+
+  AdvancedModel({required this.name, this.internalId, required this.status});
+}
+
+class AdvancedEntity {
+  final String fullName;
+  final int status;
+  final String? description;
+
+  const AdvancedEntity.fromDto({
+    required this.fullName,
+    required this.status,
+    this.description,
+  });
+
+  const AdvancedEntity.full(this.fullName, this.status, this.description);
+
+  @override
+  String toString() =>
+      'AdvancedEntity(fullName: $fullName, status: $status, description: $description)';
+}

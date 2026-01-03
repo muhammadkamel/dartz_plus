@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../code_preview_widget.dart';
+import '../models/advanced_mapping.dart';
 import '../models/user_model.dart';
 
 class MapperScreen extends StatefulWidget {
@@ -21,22 +22,38 @@ class _MapperScreenState extends State<MapperScreen> {
   void _runDemo() {
     final buffer = StringBuffer();
 
-    // 1. Code Generation Demo (Extension-based Mapper)
-    // Annotate model with @Mapper(Target, reverse: true) to generate toTarget() and toSource() extensions.
-
-    final genUser = UserEntity('Generator', 100, email: 'gen@test.com');
+    // 1. Basic Mapping Demo
+    final genUser = UserEntity('Basic User', 25, email: 'basic@test.com');
     try {
-      // 1. Map UserEntity -> UserModel (Reverse Map)
       final model = genUser.toUserModel();
-
-      // 2. Map UserModel -> UserEntity (Forward Map)
       final userBack = model.toUserEntity();
 
-      buffer.writeln('1. Extension-based Mapping:');
+      buffer.writeln('1. Basic Mapping:');
       buffer.writeln('   UserEntity -> UserModel: $model');
       buffer.writeln('   UserModel -> UserEntity: $userBack');
+      buffer.writeln('');
     } catch (e) {
-      buffer.writeln('Error in mapper mapping: $e');
+      buffer.writeln('Error in basic mapping: $e\n');
+    }
+
+    // 2. Advanced Mapping Demo (@MapTo, @IgnoreMap, Custom Constructor)
+    final advancedModel = AdvancedModel(
+      name: 'Advanced Feature',
+      secretId: 'INTERNAL_SECRET',
+      status: 1,
+    );
+
+    try {
+      final entity = advancedModel.toAdvancedEntity();
+      final modelBack = entity.toAdvancedModel();
+
+      buffer.writeln('2. Advanced Mapping (@MapTo & Custom Ctor):');
+      buffer.writeln('   AdvancedModel (name) -> AdvancedEntity (fullName)');
+      buffer.writeln('   Source: $advancedModel');
+      buffer.writeln('   Target: $entity');
+      buffer.writeln('   Back:   $modelBack (secretId is null as ignored)');
+    } catch (e) {
+      buffer.writeln('Error in advanced mapping: $e');
     }
 
     setState(() {
@@ -47,22 +64,31 @@ class _MapperScreenState extends State<MapperScreen> {
   @override
   Widget build(BuildContext context) {
     const code = '''
-// 1. Definition (user_model.dart)
+// 1. Basic Mapping
 @Mapper(UserEntity)
 class UserModel { ... }
 
-class UserEntity { ... }
+// 2. Advanced Mapping
+@Mapper(AdvancedEntity, constructor: 'fromDto')
+class AdvancedModel {
+  @MapTo('fullName')
+  final String name;
 
-// 2. Usage
-final entity = UserEntity('Name', 30, email: 'test@example.com');
-final model = entity.toUserModel();
-final entityBack = model.toUserEntity();
+  @IgnoreMap()
+  final String? secretId;
+
+  final int status;
+}
+
+// Usage
+final model = AdvancedModel(name: 'Test', status: 1);
+final entity = model.toAdvancedEntity(); // Uses .fromDto(fullName: name, ...)
     ''';
 
     return CodePreviewWidget(
-      title: 'AutoMap Extensions',
+      title: 'AutoMap Enhancements',
       description:
-          'Type-safe object mapping using generated extension methods.',
+          'Advanced object mapping with @MapTo, @IgnoreMap, and custom constructor support.',
       code: code,
       output: _output,
       result: Center(

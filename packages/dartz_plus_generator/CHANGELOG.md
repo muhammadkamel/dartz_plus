@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.3.0
+
+- **New Features**:
+  - Added support for custom field mapping using `@MapTo`.
+  - Added support for ignoring fields using `@IgnoreMap`.
+  - Added support for specifying a target class constructor in the `@Mapper` annotation.
+  - Enhanced field resolution to support bidirectional mapping with a single `@MapTo` annotation.
+
 ## 0.2.0
 
 - **Breaking Changes**:

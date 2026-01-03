@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'features/product/presentation/screens/product_detail_screen.dart';
 import 'features/profile/presentation/screens/profile_screen.dart';
 import 'screens/async_screen.dart';
 import 'screens/basic_usage_screen.dart';
@@ -86,6 +87,12 @@ class HomeScreen extends StatelessWidget {
             '13. Clean Arch Profile',
             const ProfileScreen(),
             color: Colors.teal.shade100,
+          ),
+          _buildNavItem(
+            context,
+            '14. Clean Arch Product (New @Mapper)',
+            const ProductDetailScreen(),
+            color: Colors.indigo.shade100,
           ),
         ],
       ),

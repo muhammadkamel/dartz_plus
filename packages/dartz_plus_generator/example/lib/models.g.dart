@@ -35,3 +35,15 @@ extension OrderModelToOrderEntityMapper on OrderModel {
     return OrderEntity(orderId: orderId, customerName: customerName);
   }
 }
+
+extension AdvancedModelToAdvancedEntityMapper on AdvancedModel {
+  AdvancedEntity toAdvancedEntity() {
+    return AdvancedEntity.fromDto(fullName: name, status: status);
+  }
+}
+
+extension AdvancedEntityToAdvancedModelMapper on AdvancedEntity {
+  AdvancedModel toAdvancedModel() {
+    return AdvancedModel(name: fullName, status: status);
+  }
+}

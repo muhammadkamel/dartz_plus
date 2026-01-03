@@ -338,3 +338,122 @@ class MixedCtorEntity {
   final int id;
   final String name;
 }
+
+// -----------------------------------------------------------------------------
+// NEW: @MapTo TEST
+// -----------------------------------------------------------------------------
+@ShouldGenerate(r'''
+extension MapToModelToMapToEntityMapper on MapToModel {
+  MapToEntity toMapToEntity() {
+    return MapToEntity(fullName: name);
+  }
+}
+
+extension MapToEntityToMapToModelMapper on MapToEntity {
+  MapToModel toMapToModel() {
+    return MapToModel(name: fullName);
+  }
+}
+''')
+@Mapper(MapToEntity)
+class MapToModel {
+  MapToModel({required this.name});
+  @MapTo('fullName')
+  final String name;
+}
+
+class MapToEntity {
+  MapToEntity({required this.fullName});
+  final String fullName;
+}
+
+// -----------------------------------------------------------------------------
+// NEW: @IgnoreMap TEST
+// -----------------------------------------------------------------------------
+@ShouldGenerate(r'''
+extension IgnoreMapModelToIgnoreMapEntityMapper on IgnoreMapModel {
+  IgnoreMapEntity toIgnoreMapEntity() {
+    return IgnoreMapEntity(name: name);
+  }
+}
+
+extension IgnoreMapEntityToIgnoreMapModelMapper on IgnoreMapEntity {
+  IgnoreMapModel toIgnoreMapModel() {
+    return IgnoreMapModel(name: name);
+  }
+}
+''')
+@Mapper(IgnoreMapEntity)
+class IgnoreMapModel {
+  IgnoreMapModel({required this.name, this.secret});
+  final String name;
+  @IgnoreMap()
+  final String? secret;
+}
+
+class IgnoreMapEntity {
+  IgnoreMapEntity({required this.name});
+  final String name;
+}
+
+// -----------------------------------------------------------------------------
+// NEW: CUSTOM CONSTRUCTOR TEST
+// -----------------------------------------------------------------------------
+@ShouldGenerate(r'''
+extension CustomCtorModelToCustomCtorEntityMapper on CustomCtorModel {
+  CustomCtorEntity toCustomCtorEntity() {
+    return CustomCtorEntity.named(name: name);
+  }
+}
+
+extension CustomCtorEntityToCustomCtorModelMapper on CustomCtorEntity {
+  CustomCtorModel toCustomCtorModel() {
+    return CustomCtorModel(name: name);
+  }
+}
+''')
+@Mapper(CustomCtorEntity, constructor: 'named')
+class CustomCtorModel {
+  CustomCtorModel({required this.name});
+  final String name;
+}
+
+class CustomCtorEntity {
+  CustomCtorEntity.named({required this.name});
+  final String name;
+}
+
+// -----------------------------------------------------------------------------
+// NEW: COMPLEX MAPPINGS (RENAMES, IGNORES, CUSTOM CTOR)
+// -----------------------------------------------------------------------------
+@ShouldGenerate(r'''
+extension ComplexModelToComplexEntityMapper on ComplexModel {
+  ComplexEntity toComplexEntity() {
+    return ComplexEntity.fromDto(fullName: name, status: status);
+  }
+}
+
+extension ComplexEntityToComplexModelMapper on ComplexEntity {
+  ComplexModel toComplexModel() {
+    return ComplexModel(name: fullName, status: status);
+  }
+}
+''')
+@Mapper(ComplexEntity, constructor: 'fromDto')
+class ComplexModel {
+  ComplexModel({required this.name, required this.status, this.internalId});
+
+  @MapTo('fullName')
+  final String name;
+
+  final int status;
+
+  @IgnoreMap()
+  final String? internalId;
+}
+
+class ComplexEntity {
+  ComplexEntity.fromDto({required this.fullName, required this.status});
+  final String fullName;
+  final int status;
+}

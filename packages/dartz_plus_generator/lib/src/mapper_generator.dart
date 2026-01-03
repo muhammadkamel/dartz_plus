@@ -3,7 +3,6 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
-import 'package:collection/collection.dart';
 import 'package:dartz_plus/dartz_plus.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -57,14 +56,18 @@ class MapperGenerator extends GeneratorForAnnotation<Mapper> {
     }
 
     final buffer = StringBuffer();
+    final String? constructorName = annotation.peek('constructor')?.stringValue;
 
     // 1. Forward Mapping: Annotated Class -> Target Type
-    _generateMapping(element, targetElement, buffer);
+    _generateMapping(element, targetElement, buffer, constructorName);
 
     // 2. Reverse Mapping: Target Type -> Annotated Class
     final bool reverse = annotation.peek('reverse')?.boolValue ?? true;
     if (reverse) {
-      _generateMapping(targetElement, element, buffer);
+      // For reverse mapping, we don't necessarily use the same constructor name
+      // since the original source might not have that specific constructor.
+      // We'll stick to default for now, unless we want to add 'reverseConstructor'.
+      _generateMapping(targetElement, element, buffer, null);
     }
 
     return buffer.toString();
@@ -74,6 +77,7 @@ class MapperGenerator extends GeneratorForAnnotation<Mapper> {
     ClassElement source,
     ClassElement target,
     StringBuffer buffer,
+    String? constructorName,
   ) {
     final String sourceName = source.name!;
     final String targetName = target.name!;
@@ -81,50 +85,49 @@ class MapperGenerator extends GeneratorForAnnotation<Mapper> {
 
     buffer.writeln('extension $extensionName on $sourceName {');
     buffer.writeln('  $targetName to$targetName() {');
-    buffer.writeln('    return $targetName(');
 
-    final ConstructorElement? constructor = target.unnamedConstructor;
+    final ConstructorElement? constructor = constructorName != null
+        ? target.getNamedConstructor(constructorName)
+        : target.unnamedConstructor;
+
     if (constructor == null) {
-      throw InvalidGenerationSourceError(
-        'Target class $targetName must have a default (unnamed) constructor.',
-        element: target,
-      );
+      final msg = constructorName != null
+          ? 'Target class $targetName must have a constructor named "$constructorName".'
+          : 'Target class $targetName must have a default (unnamed) constructor.';
+      throw InvalidGenerationSourceError(msg, element: target);
     }
 
+    final String constructorInvocation = constructorName != null
+        ? '$targetName.$constructorName'
+        : targetName;
+
+    buffer.writeln('    return $constructorInvocation(');
+
     final List<FieldElement> sourceFields = getAllFields(source);
+    final List<FormalParameterElement> sourceParams =
+        source.unnamedConstructor?.formalParameters ?? [];
 
     for (final FormalParameterElement param in constructor.formalParameters) {
       final String paramName = param.name!;
 
-      // Find matching field in source
-      final FieldElement? matchingField = sourceFields.firstWhereOrNull(
-        (f) => f.name == paramName,
+      // Find matching field or param in source
+      // We also pass targetFields to allow "reverse lookup" of @MapTo
+      final sourceInfo = _resolveSourceField(
+        paramName,
+        sourceFields,
+        sourceParams,
+        target,
       );
 
       String? sourceAccess;
       DartType? sourceType;
 
-      if (matchingField != null) {
-        sourceAccess = matchingField.name;
-        sourceType = matchingField.type;
-      } else {
-        // Fallback: Check source class constructor parameters (for Freezed/Factory classes)
-        final ConstructorElement? sourceCtor = source.unnamedConstructor;
-        if (sourceCtor != null) {
-          final FormalParameterElement? matchingParam = sourceCtor
-              .formalParameters
-              .firstWhereOrNull((p) => p.name == paramName);
-          if (matchingParam != null) {
-            sourceAccess = matchingParam.name;
-            sourceType = matchingParam.type;
-          }
-        }
+      if (sourceInfo != null) {
+        sourceAccess = sourceInfo.name;
+        sourceType = sourceInfo.type;
       }
 
       if (sourceAccess == null) {
-        // Smart Field Resolution:
-        // If the parameter is optional or nullable, we can skip it.
-        // It will use its default value or null.
         if (param.isOptional ||
             param.type.nullabilitySuffix != NullabilitySuffix.none) {
           continue;
@@ -151,8 +154,11 @@ class MapperGenerator extends GeneratorForAnnotation<Mapper> {
           if (sourceArg != targetArg) {
             final targetArgName = targetArg.element?.name;
             if (targetArgName != null) {
+              final isNullable =
+                  sourceListType.nullabilitySuffix != NullabilitySuffix.none;
+              final access = isNullable ? '$sourceAccess?' : sourceAccess;
               sourceAccess =
-                  '$sourceAccess.map((e) => e.to$targetArgName()).toList()';
+                  '$access.map((e) => e.to$targetArgName()).toList()';
             }
           }
         }
@@ -162,7 +168,11 @@ class MapperGenerator extends GeneratorForAnnotation<Mapper> {
         // Handle single object nested mapping
         final targetTypeName = param.type.element?.name;
         if (targetTypeName != null) {
-          sourceAccess = '$sourceAccess.to$targetTypeName()';
+          final isNullable =
+              sourceType.nullabilitySuffix != NullabilitySuffix.none;
+          sourceAccess = isNullable
+              ? '$sourceAccess?.to$targetTypeName()'
+              : '$sourceAccess.to$targetTypeName()';
         }
       }
 
@@ -176,6 +186,85 @@ class MapperGenerator extends GeneratorForAnnotation<Mapper> {
     buffer.writeln('    );');
     buffer.writeln('  }');
     buffer.writeln('}');
+  }
+
+  _SourceInfo? _resolveSourceField(
+    String targetName,
+    List<FieldElement> fields,
+    List<FormalParameterElement> params,
+    ClassElement targetClass,
+  ) {
+    // We check for annotations from both dartz_plus and dartz_plus_generator
+    // to handle different import styles and internal example usage.
+    final mapToChecker = const TypeChecker.any([
+      TypeChecker.fromUrl('package:dartz_plus/dartz_plus.dart#MapTo'),
+      TypeChecker.fromUrl(
+        'package:dartz_plus_generator/annotations.dart#MapTo',
+      ),
+    ]);
+    final ignoreChecker = const TypeChecker.any([
+      TypeChecker.fromUrl('package:dartz_plus/dartz_plus.dart#IgnoreMap'),
+      TypeChecker.fromUrl(
+        'package:dartz_plus_generator/annotations.dart#IgnoreMap',
+      ),
+    ]);
+
+    // 1. Check fields for @MapTo or direct name match
+    for (final field in fields) {
+      if (ignoreChecker.hasAnnotationOfExact(field)) continue;
+
+      final mapToAnnotation = mapToChecker.firstAnnotationOfExact(field);
+      if (mapToAnnotation != null) {
+        final mappedName = mapToAnnotation.getField('name')?.toStringValue();
+        if (mappedName == targetName) {
+          return _SourceInfo(field.name!, field.type);
+        }
+      } else if (field.name == targetName) {
+        // Only match if it doesn't have a different @MapTo
+        final otherMapTo = mapToChecker.firstAnnotationOfExact(field);
+        if (otherMapTo == null) {
+          return _SourceInfo(field.name!, field.type);
+        }
+      }
+    }
+
+    // 2. Check constructor parameters for @MapTo or direct name match
+    for (final param in params) {
+      if (ignoreChecker.hasAnnotationOfExact(param)) continue;
+
+      final mapToAnnotation = mapToChecker.firstAnnotationOfExact(param);
+      if (mapToAnnotation != null) {
+        final mappedName = mapToAnnotation.getField('name')?.toStringValue();
+        if (mappedName == targetName) {
+          return _SourceInfo(param.name!, param.type);
+        }
+      } else if (param.name == targetName) {
+        // Only match if it doesn't have a different @MapTo
+        final otherMapTo = mapToChecker.firstAnnotationOfExact(param);
+        if (otherMapTo == null) {
+          return _SourceInfo(param.name!, param.type);
+        }
+      }
+    }
+
+    // 3. Reverse Lookup: Check the TARGET class fields for @MapTo that points TO this source field
+    // This allows single-side @MapTo to work bidirectionally.
+    final targetFields = getAllFields(targetClass);
+    for (final targetField in targetFields) {
+      final mapToAnnotation = mapToChecker.firstAnnotationOfExact(targetField);
+      if (mapToAnnotation != null) {
+        final mappedName = mapToAnnotation.getField('name')?.toStringValue();
+        // If the target field says "@MapTo('name')", and we are looking for 'name' in source
+        if (targetField.name == targetName) {
+          // We need to find the source field that corresponds to mappedName
+          for (final f in fields) {
+            if (f.name == mappedName) return _SourceInfo(f.name!, f.type);
+          }
+        }
+      }
+    }
+
+    return null;
   }
 
   /// recursively retrieves fields from the class and its superclasses
@@ -201,4 +290,10 @@ class MapperGenerator extends GeneratorForAnnotation<Mapper> {
 
     return fields;
   }
+}
+
+class _SourceInfo {
+  final String name;
+  final DartType type;
+  _SourceInfo(this.name, this.type);
 }

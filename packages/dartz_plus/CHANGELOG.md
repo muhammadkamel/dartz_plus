@@ -2,9 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.2.1] - 2026-01-03
+## [0.3.0] - 2026-01-03
 
-- Refactored internal library structure to use `part` and `part of` directives, enforcing a single entry point via `package:dartz_plus/dartz_plus.dart` to prevent direct import of internal files.
+- Added `@MapTo` and `@IgnoreMap` annotations to support advanced object mapping.
+- Updated `@Mapper` annotation to support specifying a target constructor.
+- Refactored internal library structure to use `part` and `part of` directives.
 
 ## [0.2.0] - 2026-01-03
 
