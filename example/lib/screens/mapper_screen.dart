@@ -26,15 +26,15 @@ class _MapperScreenState extends State<MapperScreen> {
 
     final genUser = UserEntity('Generator', 100, email: 'gen@test.com');
     try {
-      // 1. Map UserEntity -> UserDto (Reverse Map)
-      final dto = genUser.toUserDto();
+      // 1. Map UserEntity -> UserModel (Reverse Map)
+      final model = genUser.toUserModel();
 
-      // 2. Map UserDto -> UserEntity (Forward Map)
-      final userBack = dto.toUserEntity();
+      // 2. Map UserModel -> UserEntity (Forward Map)
+      final userBack = model.toUserEntity();
 
       buffer.writeln('1. Extension-based Mapping:');
-      buffer.writeln('   UserEntity -> UserDto: $dto');
-      buffer.writeln('   UserDto -> UserEntity: $userBack');
+      buffer.writeln('   UserEntity -> UserModel: $model');
+      buffer.writeln('   UserModel -> UserEntity: $userBack');
     } catch (e) {
       buffer.writeln('Error in mapper mapping: $e');
     }
@@ -49,14 +49,14 @@ class _MapperScreenState extends State<MapperScreen> {
     const code = '''
 // 1. Definition (user_model.dart)
 @Mapper(UserEntity)
-class UserDto { ... }
+class UserModel { ... }
 
 class UserEntity { ... }
 
 // 2. Usage
 final entity = UserEntity('Name', 30, email: 'test@example.com');
-final dto = entity.toUserDto();
-final entityBack = dto.toUserEntity();
+final model = entity.toUserModel();
+final entityBack = model.toUserEntity();
     ''';
 
     return CodePreviewWidget(

@@ -5,11 +5,11 @@ part of '../dartz_plus.dart';
 ///
 /// Usage:
 /// ```dart
-/// @Mapper(UserDto)
+/// @Mapper(UserModel)
 /// class User { ... }
 /// ```
 ///
-/// This will generate a `toUserDto()` extension method on the `User` class.
+/// This will generate a `toUserModel()` extension method on the `User` class.
 class Mapper {
   /// Creates a Mapper annotation.
   ///

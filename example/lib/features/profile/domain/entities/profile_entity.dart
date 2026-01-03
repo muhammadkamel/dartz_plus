@@ -1,4 +1,6 @@
-class ProfileEntity {
+import 'package:equatable/equatable.dart';
+
+class ProfileEntity extends Equatable {
   final String id;
   final String username;
   final String email;
@@ -12,6 +14,5 @@ class ProfileEntity {
   });
 
   @override
-  String toString() =>
-      'ProfileEntity(id: $id, username: $username, email: $email)';
+  List<Object?> get props => [id, username, email, avatarUrl];
 }

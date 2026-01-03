@@ -4,14 +4,14 @@ part 'models.g.dart';
 
 // Example 1: Simple bidirectional mapping
 @Mapper(UserEntity)
-class UserDto {
+class UserModel {
   final String name;
   final int age;
 
-  UserDto({required this.name, required this.age});
+  UserModel({required this.name, required this.age});
 
   @override
-  String toString() => 'UserDto(name: $name, age: $age)';
+  String toString() => 'UserModel(name: $name, age: $age)';
 }
 
 class UserEntity {
@@ -26,22 +26,22 @@ class UserEntity {
 
 // Example 2: Mapping with optional fields
 @Mapper(ProductEntity)
-class ProductDto {
+class ProductModel {
   final String id;
   final String name;
   final double price;
 
-  ProductDto({required this.id, required this.name, required this.price});
+  ProductModel({required this.id, required this.name, required this.price});
 
   @override
-  String toString() => 'ProductDto(id: $id, name: $name, price: $price)';
+  String toString() => 'ProductModel(id: $id, name: $name, price: $price)';
 }
 
 class ProductEntity {
   final String id;
   final String name;
   final double price;
-  final String? category; // Optional field - will be null when mapped from DTO
+  final String? category;
 
   const ProductEntity({
     required this.id,
@@ -57,15 +57,15 @@ class ProductEntity {
 
 // Example 3: One-way mapping (no reverse)
 @Mapper(OrderEntity, reverse: false)
-class OrderDto {
+class OrderModel {
   final String orderId;
   final String customerName;
 
-  OrderDto({required this.orderId, required this.customerName});
+  OrderModel({required this.orderId, required this.customerName});
 
   @override
   String toString() =>
-      'OrderDto(orderId: $orderId, customerName: $customerName)';
+      'OrderModel(orderId: $orderId, customerName: $customerName)';
 }
 
 class OrderEntity {
