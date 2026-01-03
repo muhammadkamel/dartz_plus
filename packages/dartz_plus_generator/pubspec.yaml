@@ -14,7 +14,7 @@ dependencies:
   analyzer: ^9.0.0
   build: ^4.0.3
   collection: ^1.19.1
-  dartz_plus: ^0.3.0
+  dartz_plus:
   source_gen: ^4.1.1
 
 dev_dependencies:
